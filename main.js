@@ -29,13 +29,20 @@ const commandFiles = getCommandsFiles(dir, []);
 
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`)
+	client.guilds.cache.get(guildId).commands.cache.map(command => {
+		command.delete();
+	})
+	client.application.commands.cache.map(command => {
+		command.delete();
+	})
+	console.log('Cache commands cleared')
 	for (const file of commandFiles) {
 		const command = require(file);
 		commands.push(command.data.toJSON());
 		client.guilds.cache.get(guildId).commands.create(command.data.toJSON());
 		client.commands.set(command.data.name, command);
 	}
-
+	console.log('commands pushed')
 
 	// Get all interactions
 	client.on('interactionCreate', async interaction => {
